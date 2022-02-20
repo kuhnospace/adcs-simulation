@@ -21,6 +21,10 @@ def simulate_adcs(satellite,
                   start_time=0,
                   delta_t=1,
                   stop_time=6000,
+                  rtol=(1e-10, 1e-10, 1e-10, 1e-10, 1e-10, 1e-10, 1e-10, 1e-6, 1e-6,
+                      1e-6),
+                  atol=(1e-12, 1e-12, 1e-12, 1e-12, 1e-12, 1e-12, 1e-12, 1e-8, 1e-8,
+                      1e-8),
                   verbose=False):
     """Simulates an attitude determination and control system over a period of time
     
@@ -41,6 +45,10 @@ def simulate_adcs(satellite,
             seconds
         stop_time (float, optional): Defaults to 6000. The end time of the
             simulation in seconds
+        rtol (tuple): Relative tolerances for the solver, corresponding to
+            the satellite state vector (10x1)
+        rtol (tuple): Absolute tolerances for the solver, corresponding to
+            the satellite state vector (10x1)
         verbose (bool, optional). Defaults to False. Whether or not to print
             integrator output to the console while running.
     
@@ -74,14 +82,11 @@ def simulate_adcs(satellite,
         init_state = [*satellite.q, *satellite.w, *satellite.actuators.w_rxwls]
     except AttributeError:
         init_state = [*satellite.q, *satellite.w, 0, 0, 0]
-
     solver = ode(derivatives_func)
     solver.set_integrator(
         'lsoda',
-        rtol=(1e-10, 1e-10, 1e-10, 1e-10, 1e-10, 1e-10, 1e-10, 1e-6, 1e-6,
-              1e-6),
-        atol=(1e-12, 1e-12, 1e-12, 1e-12, 1e-12, 1e-12, 1e-12, 1e-8, 1e-8,
-              1e-8),
+        rtol=rtol,
+        atol=atol,
         nsteps=10000)
     solver.set_initial_value(y=init_state, t=start_time)
     solver.set_f_params(satellite, nominal_state_func, perturbations_func,
