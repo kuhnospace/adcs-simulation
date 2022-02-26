@@ -7,7 +7,7 @@ angular velocity.
 """
 
 import numpy as np
-from math_utils import quaternion_multiply
+from adcs_simulation.math_utils import quaternion_multiply
 
 
 def quaternion_derivative(q, w):

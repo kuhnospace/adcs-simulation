@@ -6,7 +6,7 @@ that are subsequently used by the actual sensor simulation in `sensors.py`.
 """
 
 import numpy as np
-from math_utils import get_DCM_i2NED, normalize
+from adcs_simulation.math_utils import get_DCM_i2NED, normalize
 
 
 def compute_local_magnetic_field(r):

@@ -8,11 +8,11 @@ for a number of methods of its sub-objects for simplicity.
 """
 
 import numpy as np
-from math_utils import cross, triad, dcm_to_quaternion, normalize, quaternion_to_dcm
-from sensor_models import compute_earth_direction, compute_local_magnetic_field
-from controller import PDController
-from actuators import Actuators
-from perturbations import gravity_gradient_torque, magnetic_field_torque
+from adcs_simulation.math_utils import cross, triad, dcm_to_quaternion, normalize, quaternion_to_dcm
+from adcs_simulation.sensor_models import compute_earth_direction, compute_local_magnetic_field
+from adcs_simulation.controller import PDController
+from adcs_simulation.actuators import Actuators
+from adcs_simulation.perturbations import gravity_gradient_torque, magnetic_field_torque
 
 
 class Spacecraft(object):

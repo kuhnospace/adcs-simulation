@@ -7,7 +7,7 @@ angular velocity.
 """
 
 import numpy as np
-from math_utils import cross
+from adcs_simulation.math_utils import cross
 
 
 def angular_velocity_derivative(J, w, M_list=[]):

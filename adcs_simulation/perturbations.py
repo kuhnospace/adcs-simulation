@@ -6,8 +6,8 @@ spacecraft parameters and its current state.
 """
 
 import numpy as np
-from math_utils import cross, normalize
-from sensor_models import compute_local_magnetic_field
+from adcs_simulation.math_utils import cross, normalize
+from adcs_simulation.sensor_models import compute_local_magnetic_field
 
 
 def gravity_gradient_torque(r, J):

@@ -8,10 +8,10 @@ integration.
 
 import numpy as np
 from scipy.integrate import ode, RK45, odeint
-from kinematics import quaternion_derivative
-from dynamics import angular_velocity_derivative
-from math_utils import normalize
-from errors import calculate_attitude_error, calculate_attitude_rate_error
+from adcs_simulation.kinematics import quaternion_derivative
+from adcs_simulation.dynamics import angular_velocity_derivative
+from adcs_simulation.math_utils import normalize
+from adcs_simulation.errors import calculate_attitude_error, calculate_attitude_rate_error
 
 
 def simulate_adcs(satellite,

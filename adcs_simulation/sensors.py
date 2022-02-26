@@ -7,8 +7,8 @@ to produce attitude and angular velocity estimates.
 """
 import numpy as np
 from scipy.stats import norm
-from math_utils import normalize, quaternion_to_dcm, skew_symmetric, cross
-from sensor_models import compute_local_magnetic_field, compute_earth_direction
+from adcs_simulation.math_utils import normalize, quaternion_to_dcm, skew_symmetric, cross
+from adcs_simulation.sensor_models import compute_local_magnetic_field, compute_earth_direction
 
 
 class Gyros(object):

@@ -6,7 +6,7 @@ and desired states (attitude and angular velocity) at a given time.
 """
 
 import numpy as np
-from math_utils import quaternion_multiply, cross
+from adcs_simulation.math_utils import quaternion_multiply, cross
 
 
 def calculate_attitude_error(DCM_desired, DCM_estimated):

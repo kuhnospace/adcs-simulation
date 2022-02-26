@@ -6,7 +6,7 @@ wheel state and methods.
 """
 
 import numpy as np
-from math_utils import cross
+from adcs_simulation.math_utils import cross
 from scipy.stats import norm
 
 
