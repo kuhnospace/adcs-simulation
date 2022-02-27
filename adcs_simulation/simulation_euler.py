@@ -80,20 +80,27 @@ def simulate_adcs(satellite,
 
     """
     try:
-        init_state = [*satellite.q, *satellite.w, *satellite.actuators.w_rxwls]
+        init_state = [*satellite.q, *satellite.w, *satellite.actuators.w_rxwls, *np.zeros(6)]
     except AttributeError:
-        init_state = [*satellite.q, *satellite.w, 0, 0, 0]
+        init_state = [*satellite.q, *satellite.w, 0, 0, 0, *np.zeros(6)]
     solver = SDE(f_and_g_func,
                     satellite,
                     nominal_state_func,
                     perturbations_func,
                     position_velocity_func,
                     delta_t)
-    ts = np.linspace(0, stop_time, stop_time // delta_t)
+    ts = np.linspace(0, stop_time, int(stop_time / delta_t))
     results = integrate(solver, init_state, ts)
-    for i in range(4):
+    plt.figure()
+    for i in range(10,13):
         data = [x[0][i].item() for x in results]
         plt.plot(data)
+    plt.title('Attitude error')
+    plt.figure()
+    for i in range(13,16):
+        data = [x[0][i].item() for x in results]
+        plt.plot(data)
+    plt.title('Attitude rate error')
     plt.show()
 
 def f_and_g_func(time, y, satellite, nominal_state_func, perturbations_func,
@@ -134,29 +141,42 @@ def f_and_g_func(time, y, satellite, nominal_state_func, perturbations_func,
         satellite.actuators.w_rxwls = x[7:10]
     except AttributeError:
         pass
-    M_applied, w_dot_rxwls, _ = simulate_estimation_and_control(
+    M_applied, w_dot_rxwls, log = simulate_estimation_and_control(
         t, satellite, nominal_state_func, delta_t)
-
+    
+#    M_applied_noise, w_dot_rxwls_noise = satellite.actuators.apply_noise_torques(satellite.w, t, delta_t)
+    
     # calculate the perturbing torques on the satellite
     M_perturb = perturbations_func(satellite)
+
     # fx are the derivatives for the "drift" part of SDE
     # so normal movement
-    fx = np.zeros(10)
+    fx = np.zeros(len(x))
+
     # gx are the derivatives for the "diffusion" part of SDE
     # so the noise part
     # TODO: Implement noise separately
-    gx = np.zeros(10)
+    gx = np.zeros(len(x))
+
+    # This is sunstorm attitude control error. Not used properly here but something to start with
+    angular_error = 2e-4
+ #   angular_speed_error_samples = np.random.randn(1, 3) * angular_error
+    
     fx[0:4] = quaternion_derivative(satellite.q, satellite.w)
     fx[4:7] = angular_velocity_derivative(satellite.J, satellite.w,
                                           [M_applied, M_perturb])
+#    gx[4:7] = angular_velocity_derivative(satellite.J, satellite.w, [M_applied_noise]) + angular_speed_error_samples
     fx[7:10] = w_dot_rxwls
+    fx[10:13] = log['attitude_err']
+    fx[13:16] = log['attitude_rate_err']
+ #   gx[7:10] = w_dot_rxwls_noise
     return torch.tensor([fx], dtype=torch.float64),torch.tensor([gx], dtype=torch.float64)
 
 def simulate_estimation_and_control(t,
                                     satellite,
                                     nominal_state_func,
                                     delta_t,
-                                    log=False):
+                                    log=True):
     """Simulates attitude estimation and control for derivatives calculation
     
     Args:
